@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 from time import perf_counter
+
+os.environ["USE_HUB_KERNELS"] = "0"
 
 import torch
 from tqdm import tqdm

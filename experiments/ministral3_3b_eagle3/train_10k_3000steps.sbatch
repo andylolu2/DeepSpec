@@ -25,6 +25,7 @@ export MASTER_PORT=${MASTER_PORT:-29661}
 export RANK=0
 export WORLD_SIZE=1
 export TOKENIZERS_PARALLELISM=false
+export USE_HUB_KERNELS=0
 
 python train.py \
     --config config/eagle3/eagle3_ministral3_3b.py \

@@ -1,6 +1,10 @@
 from __future__ import annotations
 import argparse
 import json
+import os
+
+os.environ["USE_HUB_KERNELS"] = "0"
+
 import torch
 from transformers import AutoConfig
 from deepspec.eval.dspark import Gemma4DSparkEvaluator, Qwen3DSparkEvaluator

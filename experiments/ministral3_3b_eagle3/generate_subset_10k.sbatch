@@ -22,6 +22,7 @@ mkdir -p "${RUN_ROOT}/logs" "${DATA_DIR}/regen_shards"
 cd "${REPO_DIR}"
 source .venv/bin/activate
 export PYTHONPATH="${REPO_DIR}:${PYTHONPATH:-}"
+export USE_HUB_KERNELS=0
 
 python scripts/data/generate_train_data_transformers.py \
     --model mistralai/Ministral-3-3B-Instruct-2512 \

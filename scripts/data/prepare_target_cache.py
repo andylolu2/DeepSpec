@@ -3,6 +3,8 @@ from dataclasses import dataclass
 import json
 import os
 
+os.environ["USE_HUB_KERNELS"] = "0"
+
 import torch
 import torch.distributed as dist
 from torch.utils.data import DataLoader, Subset

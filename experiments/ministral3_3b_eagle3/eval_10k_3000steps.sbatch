@@ -26,6 +26,7 @@ export MASTER_PORT=${MASTER_PORT:-29671}
 export RANK=0
 export WORLD_SIZE=1
 export TOKENIZERS_PARALLELISM=false
+export USE_HUB_KERNELS=0
 
 python eval.py \
     --target_name_or_path mistralai/Ministral-3-3B-Instruct-2512 \

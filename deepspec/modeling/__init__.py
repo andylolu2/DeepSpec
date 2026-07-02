@@ -1,3 +1,7 @@
+import os
+
+os.environ["USE_HUB_KERNELS"] = "0"
+
 from .dspark import (
     DSparkForwardOutput,
     Gemma4DSparkModel,

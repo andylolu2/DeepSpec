@@ -26,6 +26,7 @@ export MASTER_PORT=${MASTER_PORT:-29651}
 export RANK=0
 export WORLD_SIZE=1
 export TOKENIZERS_PARALLELISM=false
+export USE_HUB_KERNELS=0
 
 python scripts/data/prepare_target_cache.py \
     --config config/eagle3/eagle3_ministral3_3b.py \
