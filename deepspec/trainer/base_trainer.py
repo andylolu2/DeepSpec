@@ -294,16 +294,22 @@ class BaseTrainer:
             start_global_offset_samples=start_offset_samples,
             num_samples=num_samples,
         )
+        num_workers = int(self.args.data.num_workers)
+        worker_kwargs = {}
+        if num_workers > 0:
+            worker_kwargs = {
+                "persistent_workers": True,
+                "prefetch_factor": 4,
+            }
         return DataLoader(
             self.train_dataset,
             batch_size=int(self.args.train.local_batch_size),
             sampler=sampler,
             collate_fn=self.data_collator_cls(),
-            num_workers=int(self.args.data.num_workers),
+            num_workers=num_workers,
             pin_memory=True,
             drop_last=True,
-            persistent_workers=True,
-            prefetch_factor=4,
+            **worker_kwargs,
         )
 
     def run_batch(self, batch):
