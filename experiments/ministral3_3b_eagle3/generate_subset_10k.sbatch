@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:h100:1
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=160G
-#SBATCH --time=12:00:00
+#SBATCH --time=06:00:00
 #SBATCH --array=0-7
 #SBATCH --output=/mnt/vast/runs/andy/deepspec_ministral3_3b_eagle3/logs/%x-%A_%a.out
 #SBATCH --error=/mnt/vast/runs/andy/deepspec_ministral3_3b_eagle3/logs/%x-%A_%a.err
