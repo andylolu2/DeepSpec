@@ -18,6 +18,7 @@ CACHE_DIR=${RUN_ROOT}/smoke_target_cache
 mkdir -p "${RUN_ROOT}/logs"
 cd "${REPO_DIR}"
 source .venv/bin/activate
+export PYTHONPATH="${REPO_DIR}:${PYTHONPATH:-}"
 
 export MASTER_ADDR=127.0.0.1
 export MASTER_PORT=${MASTER_PORT:-29631}
