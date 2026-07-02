@@ -49,6 +49,7 @@ def parse_args():
         help=("Confidence-head early-stop threshold. Confidence calibration metrics are collected only when this is 0.0."),
     )
     parser.add_argument("--tensorboard-dir", type=str, default=None)
+    parser.add_argument("--output-json", type=str, default=None)
     parser.add_argument("--step", type=int, default=None,help=("step for tensorboard logging"),)
     parser.add_argument("--seed", type=int, default=980406)
     args = parser.parse_args()

@@ -32,4 +32,5 @@ python eval.py \
     --target_name_or_path mistralai/Ministral-3-3B-Instruct-2512 \
     --draft_name_or_path "${DRAFT_DIR}" \
     --tensorboard-dir "${TB_DIR}" \
+    --output-json "${RUN_ROOT}/eval_10k_step3000_metrics.json" \
     --step 3000

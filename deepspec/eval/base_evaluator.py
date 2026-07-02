@@ -708,6 +708,20 @@ class BaseEvaluator:
         if dist.get_rank() == 0 and self.metrics_rows:
             if self.args.tensorboard_dir is not None:
                 self.log_tensorboard()
+            if self.args.output_json is not None:
+                output_path = Path(self.args.output_json)
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                with output_path.open("w", encoding="utf-8") as handle:
+                    json.dump(
+                        {
+                            "target_model": self.args.target_name_or_path,
+                            "draft_model": self.args.draft_name_or_path,
+                            "step": self.args.step,
+                            "rows": self.metrics_rows,
+                        },
+                        handle,
+                        indent=2,
+                    )
         self.print_results()
 
     def evaluate(self) -> None:
