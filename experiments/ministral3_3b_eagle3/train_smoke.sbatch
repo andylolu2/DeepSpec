@@ -3,9 +3,9 @@
 #SBATCH --partition=h100
 #SBATCH --qos=research
 #SBATCH --gres=gpu:h100:1
-#SBATCH --cpus-per-task=16
-#SBATCH --mem=160G
-#SBATCH --time=00:30:00
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=80G
+#SBATCH --time=00:20:00
 #SBATCH --output=/mnt/vast/runs/andy/deepspec_ministral3_3b_eagle3/logs/%x-%j.out
 #SBATCH --error=/mnt/vast/runs/andy/deepspec_ministral3_3b_eagle3/logs/%x-%j.err
 
