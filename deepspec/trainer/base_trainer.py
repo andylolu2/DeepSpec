@@ -1,6 +1,7 @@
 from contextlib import nullcontext
 import math
 import os
+import shutil
 
 import torch
 import torch.distributed as dist
@@ -331,8 +332,41 @@ class BaseTrainer:
 
     def save_train_checkpoint(self):
         checkpoint_dir = save_checkpoint(**self._checkpoint_kwargs())
+        self._prune_checkpoints()
         dist.barrier()
         return checkpoint_dir
+
+    def _prune_checkpoints(self):
+        keep_last_checkpoints = int(
+            getattr(self.args.logging, "keep_last_checkpoints", 0) or 0
+        )
+        if keep_last_checkpoints <= 0:
+            return
+        if not is_global_main_process():
+            return
+
+        checkpoints = []
+        for name in os.listdir(self.checkpoint_dir_root):
+            if not name.startswith("step_"):
+                continue
+            checkpoint_path = os.path.join(self.checkpoint_dir_root, name)
+            if not os.path.isdir(checkpoint_path) or os.path.islink(checkpoint_path):
+                continue
+            try:
+                step = int(name.removeprefix("step_"))
+            except ValueError:
+                continue
+            checkpoints.append((step, checkpoint_path))
+
+        checkpoints.sort()
+        latest_checkpoint_path = os.path.realpath(
+            os.path.join(self.checkpoint_dir_root, "step_latest")
+        )
+        for _, checkpoint_path in checkpoints[:-keep_last_checkpoints]:
+            if os.path.realpath(checkpoint_path) == latest_checkpoint_path:
+                continue
+            shutil.rmtree(checkpoint_path)
+            print_on_global_main(f"Pruned old checkpoint {checkpoint_path}")
 
     def save_and_eval_checkpoint(self):
         checkpoint_dir = self.save_train_checkpoint()

@@ -15,10 +15,11 @@ def load_scalars(tensorboard_dir: Path) -> dict[str, ScalarSeries]:
 
     scalars = {}
     for tag in accumulator.Tags()["scalars"]:
-        scalars[tag] = [
-            (int(event.step), float(event.value))
+        values_by_step = {
+            int(event.step): float(event.value)
             for event in accumulator.Scalars(tag)
-        ]
+        }
+        scalars[tag] = sorted(values_by_step.items())
     return scalars
 
 

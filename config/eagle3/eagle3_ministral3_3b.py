@@ -35,6 +35,7 @@ logging = dict(
     logging_steps=10,
     checkpointing_steps=3000,
     save_only_checkpointing_steps=None,
+    keep_last_checkpoints=None,
 )
 
 data = dict(
