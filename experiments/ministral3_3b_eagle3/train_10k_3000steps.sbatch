@@ -35,4 +35,5 @@ python train.py \
     --opts "train.local_batch_size=1" \
     --opts "train.global_batch_size=512" \
     --opts "train.max_train_steps=3000" \
-    --opts "logging.checkpointing_steps=3000"
+    --opts "logging.checkpointing_steps=3000" \
+    --opts "logging.save_only_checkpointing_steps=50"

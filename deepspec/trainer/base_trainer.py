@@ -329,8 +329,13 @@ class BaseTrainer:
             local_batch_size=int(self.args.train.local_batch_size),
         )
 
-    def save_and_eval_checkpoint(self):
+    def save_train_checkpoint(self):
         checkpoint_dir = save_checkpoint(**self._checkpoint_kwargs())
+        dist.barrier()
+        return checkpoint_dir
+
+    def save_and_eval_checkpoint(self):
+        checkpoint_dir = self.save_train_checkpoint()
         if is_global_main_process():
             _launch_eval(
                 target_model_name_or_path=self.args.model.target_model_name_or_path,
@@ -344,8 +349,7 @@ class BaseTrainer:
 
     def _save_and_suspend(self):
         print_on_global_main("Saving checkpoint before suspending...")
-        save_checkpoint(**self._checkpoint_kwargs())
-        dist.barrier()
+        self.save_train_checkpoint()
         if is_global_main_process():
             print_on_global_main("Going to suspend...")
             self.suspend_controller.go_suspend()
@@ -396,8 +400,20 @@ class BaseTrainer:
                     grad_norm=grad_norm.item(),
                 )
 
-                if self.global_step % int(self.args.logging.checkpointing_steps) == 0:
+                should_eval_checkpoint = (
+                    self.global_step % int(self.args.logging.checkpointing_steps) == 0
+                )
+                save_only_checkpointing_steps = int(
+                    getattr(self.args.logging, "save_only_checkpointing_steps", 0) or 0
+                )
+                should_save_only_checkpoint = (
+                    save_only_checkpointing_steps > 0
+                    and self.global_step % save_only_checkpointing_steps == 0
+                )
+                if should_eval_checkpoint:
                     self.save_and_eval_checkpoint()
+                elif should_save_only_checkpoint:
+                    self.save_train_checkpoint()
 
                 if self.suspend_controller.requested():
                     self._save_and_suspend()
