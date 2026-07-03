@@ -1,0 +1,108 @@
+import argparse
+import json
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+
+
+ScalarSeries = list[tuple[int, float]]
+
+
+def load_scalars(tensorboard_dir: Path) -> dict[str, ScalarSeries]:
+    accumulator = EventAccumulator(str(tensorboard_dir), size_guidance={"scalars": 0})
+    accumulator.Reload()
+
+    scalars = {}
+    for tag in accumulator.Tags()["scalars"]:
+        scalars[tag] = [
+            (int(event.step), float(event.value))
+            for event in accumulator.Scalars(tag)
+        ]
+    return scalars
+
+
+def plot_series(
+    *,
+    scalars: dict[str, ScalarSeries],
+    tags: list[str],
+    output_path: Path,
+    title: str,
+    ylabel: str,
+) -> None:
+    plt.figure(figsize=(8, 4.5))
+    for tag in tags:
+        series = scalars.get(tag, [])
+        if not series:
+            continue
+        steps = [step for step, _ in series]
+        values = [value for _, value in series]
+        label = tag.removeprefix("train/")
+        plt.plot(steps, values, label=label, linewidth=1.8)
+
+    plt.title(title)
+    plt.xlabel("Optimizer step")
+    plt.ylabel(ylabel)
+    plt.grid(True, alpha=0.25)
+    plt.legend(loc="best", fontsize=8)
+    plt.tight_layout()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_path, dpi=180)
+    plt.close()
+
+
+def write_summary(scalars: dict[str, ScalarSeries], output_path: Path) -> None:
+    summary = {}
+    for tag, series in sorted(scalars.items()):
+        if not series:
+            continue
+        step, value = series[-1]
+        summary[tag] = {"step": step, "value": value}
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        json.dumps(summary, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--tensorboard-dir", required=True, type=Path)
+    parser.add_argument("--output-dir", required=True, type=Path)
+    args = parser.parse_args()
+
+    scalars = load_scalars(args.tensorboard_dir)
+
+    plot_series(
+        scalars=scalars,
+        tags=["train/loss"],
+        output_path=args.output_dir / "train_loss.png",
+        title="Training loss",
+        ylabel="Loss",
+    )
+    plot_series(
+        scalars=scalars,
+        tags=["train/tau_greedy", "train/tau_probabilistic"],
+        output_path=args.output_dir / "train_tau.png",
+        title="Expected accepted length proxies",
+        ylabel="Tokens",
+    )
+    plot_series(
+        scalars=scalars,
+        tags=[f"train/accept_rate@{idx}" for idx in range(7)],
+        output_path=args.output_dir / "train_accept_rates.png",
+        title="Per-position acceptance rates",
+        ylabel="Acceptance rate",
+    )
+    plot_series(
+        scalars=scalars,
+        tags=[f"train/accuracy@{idx}" for idx in range(7)],
+        output_path=args.output_dir / "train_accuracies.png",
+        title="Per-position token accuracies",
+        ylabel="Accuracy",
+    )
+    write_summary(scalars, args.output_dir / "train_metric_summary.json")
+
+
+if __name__ == "__main__":
+    main()
