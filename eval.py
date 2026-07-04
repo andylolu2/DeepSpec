@@ -36,7 +36,18 @@ TASKS = [
     ("arena-hard-v2", 500),
 ]
 
-def parse_args():
+
+def parse_task_spec(task_spec: str) -> tuple[str, int | None]:
+    if ":" not in task_spec:
+        return task_spec, None
+
+    name, max_samples = task_spec.rsplit(":", 1)
+    if max_samples.lower() == "none":
+        return name, None
+    return name, int(max_samples)
+
+
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--target_name_or_path", type=str, required=True)
     parser.add_argument("--draft_name_or_path",type=str,required=True)
@@ -52,8 +63,20 @@ def parse_args():
     parser.add_argument("--output-json", type=str, default=None)
     parser.add_argument("--step", type=int, default=None,help=("step for tensorboard logging"),)
     parser.add_argument("--seed", type=int, default=980406)
+    parser.add_argument(
+        "--task",
+        action="append",
+        default=None,
+        help=(
+            "Evaluate only this task. Repeatable. Format is `name` to use all "
+            "available samples or `name:max_samples` to cap the dataset."
+        ),
+    )
     args = parser.parse_args()
-    args.tasks = list(TASKS)
+    if args.task is None:
+        args.tasks = list(TASKS)
+    else:
+        args.tasks = [parse_task_spec(task_spec) for task_spec in args.task]
     return args
 
 
