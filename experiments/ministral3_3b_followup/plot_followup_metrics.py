@@ -44,6 +44,13 @@ TRAIN_RUNS = {
             "eagle3_ttt7_ministral3_3b_e2e_tv_from_kl_lr1e4"
         ),
     },
+    "e2e_tv_from_kl_lr1e4_8gpu": {
+        "label": "Eagle3 KL -> e2e-TV lr=1e-4 8GPU",
+        "tensorboard_dir": Path(
+            "/mnt/vast/runs/andy/deepspec_tensorboard/deepspec/"
+            "eagle3_ttt7_ministral3_3b_e2e_tv_from_kl_lr1e4_8gpu"
+        ),
+    },
     "dspark": {
         "label": "DSpark block-7",
         "tensorboard_dir": Path(
@@ -73,6 +80,10 @@ EVAL_JSONS = {
     "e2e_tv_from_kl_lr1e4": Path(
         "/mnt/vast/runs/andy/deepspec_ministral3_3b_followup/"
         "eval_eagle3_e2e_tv_from_kl_lr1e4_step3000_metrics.json"
+    ),
+    "e2e_tv_from_kl_lr1e4_8gpu": Path(
+        "/mnt/vast/runs/andy/deepspec_ministral3_3b_followup/"
+        "eval_eagle3_e2e_tv_from_kl_lr1e4_8gpu_step3000_metrics.json"
     ),
     "dspark": Path(
         "/mnt/vast/runs/andy/deepspec_ministral3_3b_followup/"
