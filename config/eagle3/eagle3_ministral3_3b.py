@@ -13,6 +13,7 @@ model = dict(
     target_layer_ids=[1, 7, 13, 19, 24],
     ttt_length=7,
     step_loss_decay=0.8,
+    loss_type="soft_ce",
     draft_num_hidden_layers=1,
 )
 

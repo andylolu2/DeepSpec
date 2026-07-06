@@ -74,6 +74,7 @@ class Qwen3Eagle3Trainer(BaseTrainer):
             batch=batch,
             ttt_length=int(self.draft_model.ttt_length),
             step_loss_decay=float(self.draft_model.step_loss_decay),
+            loss_type=str(getattr(self.args.model, "loss_type", "soft_ce")),
         )
 
 
