@@ -8,6 +8,8 @@ These launchers compare:
   paper's main MTP-step setting more closely than the TTT-7 baseline.
 - Eagle3 initialized from the completed KL baseline checkpoint, then adapted
   with the end-to-end multi-step TV loss and a fresh optimizer schedule.
+- A lower-LR version of the KL-initialized TV adaptation, to test whether the
+  TV objective needs a gentler update schedule from an already strong draft.
 - DSpark with a Ministral3-3B target.
 
 All generated heavy artifacts are directed under `/mnt/vast/runs/andy`.
@@ -25,6 +27,7 @@ Full 3000-step jobs:
 sbatch experiments/ministral3_3b_followup/train_eagle3_e2e_tv_3000steps_16gpu.sbatch
 sbatch experiments/ministral3_3b_followup/train_eagle3_e2e_tv_ttt5_3000steps_16gpu.sbatch
 sbatch experiments/ministral3_3b_followup/train_eagle3_e2e_tv_from_kl_3000steps_16gpu.sbatch
+sbatch experiments/ministral3_3b_followup/train_eagle3_e2e_tv_from_kl_lr1e4_3000steps_16gpu.sbatch
 sbatch experiments/ministral3_3b_followup/train_dspark_3000steps_16gpu.sbatch
 ```
 
@@ -41,6 +44,7 @@ Eval jobs:
 sbatch experiments/ministral3_3b_followup/eval_eagle3_e2e_tv_3000steps.sbatch
 sbatch experiments/ministral3_3b_followup/eval_eagle3_e2e_tv_ttt5_3000steps.sbatch
 sbatch experiments/ministral3_3b_followup/eval_eagle3_e2e_tv_from_kl_3000steps.sbatch
+sbatch experiments/ministral3_3b_followup/eval_eagle3_e2e_tv_from_kl_lr1e4_3000steps.sbatch
 sbatch experiments/ministral3_3b_followup/eval_dspark_3000steps.sbatch
 sbatch experiments/ministral3_3b_followup/eval_eagle3_e2e_tv_8gpu_3000steps.sbatch
 sbatch experiments/ministral3_3b_followup/eval_dspark_8gpu_3000steps.sbatch
