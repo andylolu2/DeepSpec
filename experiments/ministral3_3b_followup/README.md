@@ -22,6 +22,13 @@ sbatch experiments/ministral3_3b_followup/train_eagle3_e2e_tv_3000steps_16gpu.sb
 sbatch experiments/ministral3_3b_followup/train_dspark_3000steps_16gpu.sbatch
 ```
 
+Single-node fallback jobs:
+
+```bash
+sbatch experiments/ministral3_3b_followup/train_eagle3_e2e_tv_3000steps_8gpu.sbatch
+sbatch experiments/ministral3_3b_followup/train_dspark_3000steps_8gpu.sbatch
+```
+
 Eval jobs:
 
 ```bash
