@@ -160,7 +160,8 @@ class BaseTrainer:
         self.suspend_controller = SuspendController(device=self.device)
         self.next_micro_step = 0
 
-        if is_global_main_process(): ensure_dir(self.checkpoint_dir_root)
+        if is_global_main_process():
+            ensure_dir(self.checkpoint_dir_root)
         training_logger.init(
             logging_steps=int(self.args.logging.logging_steps),
             tensorboard_dir=self.args.logging.tensorboard_dir,
@@ -175,6 +176,28 @@ class BaseTrainer:
                 precision_dtype=self.precision_dtype,
                 global_rank=self.global_rank,
             )
+        else:
+            init_draft_model_name_or_path = getattr(
+                self.args.model,
+                "init_draft_model_name_or_path",
+                None,
+            )
+            if init_draft_model_name_or_path is not None:
+                print_on_local_main(
+                    f"Initializing draft model from {init_draft_model_name_or_path}."
+                )
+                self.draft_model = type(self.draft_model).from_pretrained(
+                    str(init_draft_model_name_or_path),
+                    dtype=self.precision_dtype,
+                    attn_implementation=str(
+                        self.draft_model.config._attn_implementation
+                    ),
+                )
+                self.draft_model = self.draft_model.to(
+                    device=self.device,
+                    dtype=self.precision_dtype,
+                )
+                self.draft_model.set_embedding_head_trainable(False)
         self.model = self.draft_model
         if self.args.train.torch_compile:
             print_on_local_main("Compiling training model with torch.compile...")
