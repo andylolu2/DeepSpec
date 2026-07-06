@@ -34,4 +34,6 @@ Eval jobs:
 ```bash
 sbatch experiments/ministral3_3b_followup/eval_eagle3_e2e_tv_3000steps.sbatch
 sbatch experiments/ministral3_3b_followup/eval_dspark_3000steps.sbatch
+sbatch experiments/ministral3_3b_followup/eval_eagle3_e2e_tv_8gpu_3000steps.sbatch
+sbatch experiments/ministral3_3b_followup/eval_dspark_8gpu_3000steps.sbatch
 ```
